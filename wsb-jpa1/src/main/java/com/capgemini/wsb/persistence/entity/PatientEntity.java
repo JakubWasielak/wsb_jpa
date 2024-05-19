@@ -1,12 +1,17 @@
 package com.capgemini.wsb.persistence.entity;
 
 import java.time.LocalDate;
-
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -33,6 +38,25 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+
+	@Column(nullable = false)
+	private boolean hasInsurance;
+
+	@OneToOne(
+		cascade = CascadeType.PERSIST,
+		fetch = FetchType.LAZY,
+		optional = false,
+		orphanRemoval = true
+	)
+	@JoinColumn(name = "address_id")
+	private AddressEntity address;
+
+	@OneToMany(
+		mappedBy = "patient", 
+		cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, 
+		orphanRemoval = true
+	)
+	private List<VisitEntity> visits;
 
 	public Long getId() {
 		return id;
@@ -88,6 +112,30 @@ public class PatientEntity {
 
 	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	public boolean isHasInsurance() {
+		return hasInsurance;
+	}
+
+	public void setHasInsurance(boolean hasInsurance) {
+		this.hasInsurance = hasInsurance;
+	}
+
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<VisitEntity> visits) {
+		this.visits = visits;
 	}
 
 }
